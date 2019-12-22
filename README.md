@@ -13,4 +13,4 @@ moja_macierz.switch_rows(1, 2) #zamienianie dierszy o podanych numerach
 moja_macierz.multiply_row(3, 2.5) #mnożenie podanego wiersza przez podany skalar
 moje_macierz.add_row(2, 1, 0.5) #dodanie do podanego wiersza innego wiersza pomnożonoego przez skalar
 ```
-Oprócz tego zdefiniowana jest jeszcze garść podstawowych operacji na wektorach
+Oprócz tego zdefiniowana jest jeszcze garść podstawowych operacji na wektorach.
