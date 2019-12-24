@@ -7,7 +7,7 @@ Tworzenie wektora:
 ```
 moj_wektor = Vector([1, 2, 3, 4])
 ```
-Operacje zdefiniowane na macierzach: dodawanie, odejmowanie, mnożenie przez skalar i przez macierz, wypisanie (print(moja_macierz)), wywołanie macierzy jako przekształcenia z parametrem wektora (moja_macierz(moj_wektor)), wypisanie rozmiarów (.size()), stworzenie kopii (.copy()), oraz operacje elementarne na macierzy w następującej postaci
+Operacje zdefiniowane na macierzach: dodawanie, odejmowanie, mnożenie przez skalar i przez macierz, wypisanie (print(moja_macierz)), transpozycja, sklejenie (doklejenie do prawej strony macierzy innej macierzy), wywołanie macierzy jako przekształcenia z parametrem wektora (moja_macierz(moj_wektor)), wypisanie rozmiarów (.size()), stworzenie kopii (.copy()), oraz operacje elementarne na macierzy w następującej postaci
 ```
 moja_macierz.switch_rows(1, 2) #zamienianie wierszy o podanych numerach
 moja_macierz.multiply_row(3, 2.5) #mnożenie podanego wiersza przez podany skalar
