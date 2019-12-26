@@ -7,25 +7,30 @@ class OutOfRange(Exception):
 class WrongObjectSize(Exception):
     """Throw this exception when expected diffrent object size."""
 
+
+import cmath
+
+
 class Vector:
     
-    def __init__(self, *args):
-        if self._proper_args(args):
-            self.__param = args[0]
-        else:
-            raise WrongInputType
+    def __init__(self, vec):
+        self.__param = []
+        self._proper_args(vec)
 
-    def _proper_args(self, args):
-        if not args or len(args) > 1:
-            return False
-        args = args[0]    
-        if not isinstance(args, list) or len(args) == 0:
-            return False
+    def _proper_args(self, vec):
+        if not isinstance(vec, list) or len(vec) == 0:
+            raise WrongInputType
         else:
-            for num in args:
-                if not isinstance(num, (int, float)):
-                    return False
-            return True
+            for num in vec:
+                if isinstance(num, tuple):
+                    if len(num) != 2 or not isinstance(num[0], (int, float)) or not isinstance(num[1], (int, float)):
+                        raise WrongInputType
+                    else:
+                        self.__param.append(complex(num[0], num[1]))
+                elif isinstance(num, (int, float, complex)):
+                    self.__param.append(num)
+                else:
+                    raise WrongInputType
 
     @classmethod
     def unit(cls, v_size, number):
