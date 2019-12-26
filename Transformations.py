@@ -20,7 +20,7 @@ def steps_to_triangular(mat_1):
         return (False, -1) 
 
     #getting zeros under diagonal
-    for i in range(min(mat_1.size()[0], mat_1.size()[1])):
+    for i in range(min(mat_1.size())):
         (is_nonz, where_nonz) = get_non_zero_under(mat_1, i, i)
         if is_nonz:
             if i != where_nonz:
@@ -139,3 +139,14 @@ def invertible(mat_1):
     steps = steps_to_identity(mat_1.copy())
     inver = Matrix.identity(mat_1.size()[0])
     return follow_transformations(inver, steps)
+
+
+def rank(mat_1):
+    """Returns rang of given Matrix."""
+    mat_2 = mat_1.copy()
+    steps_to_triangular(mat_2)
+    result = 0
+    for i in range(mat_1.size()[0]):
+        if mat_2[i] != ([0] * mat_1.size()[1]):
+            result += 1
+    return result
