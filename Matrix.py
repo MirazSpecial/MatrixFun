@@ -10,34 +10,43 @@ class WrongObjectSize(Exception):
 class InvalidTransformationInput(Exception):
     """Throw this exception then invalid transformation input."""
 
+import cmath
 from Vector import *
 
 
 class Matrix:
 
-    def __init__(self, *args):
-        if self._proper_args(args):
-            self.__param = args[0]
-        else:
-            raise WrongInputType
+    def __init__(self, mat):
+        self.__param = []
+        self._proper_args(mat)
+        self._round_param()
 
-    def _proper_args(self, args):
-        if not args or len(args) > 1:
-            return False
-        args = args[0]    
-        if not isinstance(args, list) or len(args) == 0:
-            return False
-        elif not all(isinstance(row, list) and len(row) > 0 for row in args):
-            return False
+    def _proper_args(self, mat):
+        if not isinstance(mat, list) or len(mat) == 0:
+            raise WrongInputType
+        elif not all(isinstance(row, list) and len(row) > 0 for row in mat):
+            raise WrongInputType
         else:
-            width = len(args[0])
-            for row in args:
-                if len(row) != width:
-                    return False
-                for num in row:
-                    if not isinstance(num, (int, float)):
-                        return False
-            return True 
+            width = len(mat[0])
+            for i in range(len(mat)):
+                self.__param.append([])
+                if len(mat[i]) != width:
+                    raise WrongInputType
+                for num in mat[i]:
+                    if isinstance(num, tuple):
+                        if len(num) != 2 or not isinstance(num[0], (int, float)) or not isinstance(num[0], (int, float)):
+                            raise WrongInputType
+                        else:
+                            self.__param[i].append(complex(num[0], num[1]))
+                    elif isinstance(num, (int, float, complex)):
+                        self.__param[i].append(num)
+                    else:
+                        raise WrongInputType
+
+    def _round_param(self):
+        for i in range(self.size()[0]):
+            for j in range(self.size()[1]):
+                self.__param[i][j] = complex(round(self.__param[i][j].real, 9), round(self.__param[i][j].imag, 9))
 
     @classmethod
     def identity(cls, m_size):
@@ -128,7 +137,7 @@ class Matrix:
             raise WrongInputType
 
     def __rmul__(self, other):
-        if isinstance(other, (float, int)):
+        if isinstance(other, (float, int, complex)):
             new_matrix = []
             for row in self.__param:
                 new_row = []
@@ -195,6 +204,19 @@ class Matrix:
         else:
             raise WrongInputType
 
+    def __pow__(self, other):
+        if isinstance(other, int):
+            if self.size()[0] != self.size()[1]:
+                raise WrongObjectSize
+            else:
+                #for now, lineral by exponent
+                temp = Matrix.identity(self.size()[0])
+                for i in range(other):
+                    temp *= self
+                return temp
+        else:
+            raise WrongInputType
+
     def __getitem__(self, key):
         if isinstance(key, int):
             if key > self.size()[0]:
@@ -233,56 +255,75 @@ class Matrix:
             for j in range(self.size()[0]):
                 new_row.append(self.__param[j][i])
             new_matrix.append(new_row)
-        return Matrix(new_matrix)
+        self.__param = new_matrix
+        return self
+
+    def conjugate_transpose(self):
+        new_matrix = []
+        for i in range(self.size()[1]):
+            new_row = []
+            for j in range(self.size()[0]):
+                new_row.append(complex(self.__param[j][i].real, -self.__param[j][i].imag))
+            new_matrix.append(new_row)
+        self.__param = new_matrix
+        return self
 
     def switch_rows(self, r1, r2):
         if isinstance(r1, int) and isinstance(r2, int):
             if r1 >= self.size()[0] or r2 >= self.size()[0]:
                 raise OutOfRange
+            elif r1 == r2:
+                raise InvalidTransformationInput
             else:
-                new_matrix = self.copy()
-                new_matrix.__param[r1] = self.__param[r2].copy()
-                new_matrix.__param[r2] = self.__param[r1].copy()
-                return new_matrix
+                for i in range(self.size()[1]):
+                    temp = self.__param[r1][i]
+                    self.__param[r1][i] = self.__param[r2][i]
+                    self.__param[r2][i] = temp
+                return self
         else:
             raise WrongInputType
             
     def multiply_row(self, r1, scal):
-        if isinstance(r1, int) and isinstance(scal, (int, float)):
+        if isinstance(r1, int) and isinstance(scal, (int, float, complex)):
             if r1 >= self.size()[0]:
                 raise OutOfRange
             elif scal == 0:
                 raise InvalidTransformationInput
             else:
-                new_matrix = self.copy()
                 for i in range(self.size()[1]):
-                    new_matrix.__param[r1][i] *= scal
-                return new_matrix
+                    self.__param[r1][i] *= scal
+                return self
         else:
             raise WrongInputType
 
     def add_row(self, r1, r2, scal):
-        if isinstance(r1, int) and isinstance(r2, int) and isinstance(scal, (int, float)):
+        if isinstance(r1, int) and isinstance(r2, int) and isinstance(scal, (int, float, complex)):
             if r1 >= self.size()[0] or r2 >= self.size()[0]:
                 raise OutOfRange
             elif r1 == r2:
                 raise InvalidTransformationInput
             else:
-                new_matrix = self.copy()
                 for i in range(self.size()[1]):
-                    new_matrix.__param[r1][i] += scal * new_matrix.__param[r2][i]
-                return new_matrix
+                    self.__param[r1][i] += scal * self.__param[r2][i]
+                return self
         else:
             raise WrongInputType
+
+    def shuffle(self):
+        for i in range(int(self.size()[0] / 2)):
+            for j in range(self.size()[1]):
+                temp = self.__param[i][j]
+                self.__param[i][j] = self.__param[self.size()[0] - i - 1][j]
+                self.__param[self.size()[0] - i - 1][j] = temp
+        return self
 
     def attach(self, other):
         if isinstance(other, Matrix):
             if self.size()[0] == other.size()[0]:
                 new_matrix = []
                 for i in range(self.size()[0]):
-                    new_row = self.__param[i] + other.__param[i]
-                    new_matrix.append(new_row)
-                return Matrix(new_matrix)
+                    self.__param[i] += other.__param[i]
+                return self
             else:
                 raise WrongObjectSize
         else:
