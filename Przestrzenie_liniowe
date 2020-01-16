@@ -1,0 +1,13 @@
+Plan klasy - przestrzeń liniowa
+
+Przestrzeń liniowa tak jak w algebrze liniowej, podstawowym aspektem jest baza - 
+    dla przestrzeni n-wymiarowej będzie to tablica n-wektorów co najmniej n-wymiarowych.
+    Dla podprzestrzeni liniowej jakiejś przestrzeni czyli gdy wektory mają mają więcej niż n wymiarów,
+    nie powinno być problemu.
+__init__ - tworzy przestrzeń z tablicy wektorów liniowo niezależnych (lub rzuca wyjątkiem)
+@classmethod .span() - tworzy przestrzeń z tablicy wektorów być może liniowo zależnych 
+.dim() - zwracanie wymiaru przestrzeni
+.vdim() - zwraca wymiar wektorow bazowych
+__add__ - zwraca przestrzeń będącą sumą dwóch przestrzeni (o ile da się je dodać, czyli o ile wektory bazowe mają te same rozmiary)
+__mul__ - zwraca przestrzeń będącą przeciąciem podanych przestrzeni
+__sub__ - zwraca przestrzeń po odjęciu z bazy pierwszej przestrzeni wektorów z drugiej
